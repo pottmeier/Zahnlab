@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  web:
+    build: ./Zahnlab
+    ports:
+    - 8000:8000
+    volumes:
+    - ./Zahnlab:/usr/src/Zahnlab
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U myuser -d mydatabase"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
